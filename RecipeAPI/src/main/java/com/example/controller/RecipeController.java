@@ -26,8 +26,8 @@ public class RecipeController {
     public Page<Recipe> getAllRecipes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "rating") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
     ) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -62,17 +62,30 @@ public class RecipeController {
         return recipeService.searchByCuisine(name, pageable);
     }
 
-    /**
-     * ✅ Search by country or state
-     * Example: GET /api/recipes/search/country?name=US&page=0&size=5
-     */
-    @GetMapping("/search/country")
-    public Page<Recipe> searchByCountryState(
-            @RequestParam String name,
+    @GetMapping("/search")
+    public Page<Recipe> searchRecipes(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String continent,
+            @RequestParam(required = false, name = "countryState") String countryState,
+            @RequestParam(required = false) Double rating,
+            @RequestParam(required = false) String cuisine,
+            @RequestParam(required = false) Integer totalTime,
+            @RequestParam(required = false) Integer prepTime,
+            @RequestParam(required = false) Integer cookTime,
+            @RequestParam(required = false) String calories,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String[] sort
     ) {
-        Pageable pageable = PageRequest.of(page, size);
-        return recipeService.searchByCountryState(name, pageable);
+        String sortField = sort[0];
+        Sort.Direction sortDirection = sort.length > 1 && sort[1].equalsIgnoreCase("desc")
+                ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
+
+        return recipeService.searchRecipes(
+                id, continent, countryState, rating, cuisine,
+                totalTime, prepTime, cookTime, calories, pageable
+        );
     }
 }
+
