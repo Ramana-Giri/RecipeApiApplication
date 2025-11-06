@@ -38,29 +38,12 @@ public class RecipeController {
      * ✅ Search by title
      * Example: GET /api/recipes/search/title?keyword=chicken&page=0&size=5
      */
-    @GetMapping("/search/title")
-    public Page<Recipe> searchByTitle(
-            @RequestParam String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size);
-        return recipeService.searchByTitle(keyword, pageable);
-    }
+
 
     /**
      * ✅ Search by cuisine
      * Example: GET /api/recipes/search/cuisine?name=Italian&page=0&size=5
      */
-    @GetMapping("/search/cuisine")
-    public Page<Recipe> searchByCuisine(
-            @RequestParam String name,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size);
-        return recipeService.searchByCuisine(name, pageable);
-    }
 
     @GetMapping("/search")
     public Page<Recipe> searchRecipes(
